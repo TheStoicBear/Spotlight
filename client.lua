@@ -19,7 +19,7 @@ end
 function DisplayHelp(text)
     SetTextComponentFormat("STRING")
     AddTextComponentString(text)
-    DisplayHelpTextFromStringLabel(0, 0, 1, - 1)
+    DisplayHelpTextFromStringLabel(0, 0, 1, -1)
 end
 
 function getVehicleSpotlightStatus(vehicleKey)
@@ -40,13 +40,14 @@ AddEventHandler("playerSpawned", function(spawnInfo)
     TriggerServerEvent("spotlight:syncSpotlights")
 end)
 
+local spotlightOn = false -- Variable to track spotlight state
+
 RegisterCommand(spotlightCommand, function(source, args, rawCommand)
     local ped = GetPlayerPed(-1)
     local veh = GetVehiclePedIsIn(ped, false)
     if IsPedInAnyVehicle(ped, false) then
         if whitelistLEO then
             if GetVehicleClass(veh) ~= 18 then
-                --CancelEvent()
                 return ShowNotification("~r~Invalid permissions.")
             end
         end
@@ -57,19 +58,26 @@ RegisterCommand(spotlightCommand, function(source, args, rawCommand)
         local spotlightStatus = getVehicleSpotlightStatus(vehicleNetworkId)
         if spotlightStatus == false then
             ShowNotification("Spotlight toggled ~g~on~w~.")
+            spotlightOn = true
+            SetVehicleLights(veh, 2) -- Set vehicle lights to high beams
+            SetVehicleLightMultiplier(veh, 20.0) -- Increase light brightness
         else
             ShowNotification("Spotlight toggled ~r~off~w~.")
             Wait(300)
             DisplayHelp("Spotlight is ~r~off~w~.")
+            spotlightOn = false
+            SetVehicleLights(veh, 0) -- Set vehicle lights to low beams
+            SetVehicleLightMultiplier(veh, 1.0) -- Reset light brightness
         end
     else
         ShowNotification("~y~You are not in a vehicle.")
     end
 end)
 
+
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(1)
+        Citizen.Wait(0) -- Reduced the interval to 0 milliseconds for more frequent updates
         for i, spotlightInformation in ipairs(activeVehicleSpotlights) do
             local ped = GetPlayerPed(-1)
             local vehicle = NetToVeh(spotlightInformation[1])
@@ -91,32 +99,29 @@ Citizen.CreateThread(function()
                 local forwardVector = GetEntityForwardVector(vehicle)
                 local heading = GetEntityHeading(vehicle)
                 if IsControlPressed(0, 127) then -- Up // NumPad 8
-                    newZ = newZ + 0.1
+                    newZ = newZ + 0.04
                 end
                 if IsControlPressed(0, 126) then -- Down // NumPad 5
-                    newZ = newZ - 0.1
+                    newZ = newZ - 0.04
                 end
                 if IsControlPressed(0, 124) then -- Left // NumPad 4
                     if heading >= 180 and heading <= 365 then
-                        newY = newY + 0.1
+                        newY = newY + 0.04
                     else
-                        newY = newY - 0.1
+                        newY = newY - 0.04
                     end
                 end
                 if IsControlPressed(0, 125) then -- Right // NumPad 6
                     if heading >= 180 and heading <= 365 then
-                        newY = newY - 0.1
+                        newY = newY - 0.04
                     else
-                        newY = newY + 0.1
+                        newY = newY + 0.04
                     end
                 end
                 TriggerServerEvent("spotlight:updateSpotlight", i, {forwardVector.x, (direct.y + newY), (direct.z + newZ)})
                 DisplayHelp("Spotlight is ~g~on~w~.")
             end
-          --posX, posY, posZ, colorR, colorG, colorB, range, intensity
-          --posX, posY, posZ, dirX, dirY, dirZ, colorR, colorG, colorB, distance, brightness, hardness, radius, falloff
-          --DrawLightWithRange(coords.x, windowCoords.y, coords.z,  221, 221, 221, 5.0, 5.0)
-          DrawSpotLight(coords.x, windowCoords.y, coords.z, direct.x, direct.y, direct.z, 221, 221, 221, 70.0, 50.0, 4.3, 25.0, 28.6)
+            DrawSpotLight(coords.x, windowCoords.y, coords.z, direct.x, direct.y, direct.z, 221, 221, 221, 30.0, 50.0, 4.3, 25.0, 18.6)
         end
     end
 end)
