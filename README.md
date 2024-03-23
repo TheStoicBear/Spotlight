@@ -2,6 +2,18 @@
 ### LightModifier brightens you headlights when spotlight is active. 
 ### Spotlight movement smoothing / realism
 
+# Normal Headlights
+![image](https://github.com/TheStoicBear/Spotlight/assets/112611821/84ff76e4-9c5d-48a2-9259-da44a7d99cd9)
+
+# Headlight Power Modifer
+![image](https://github.com/TheStoicBear/Spotlight/assets/112611821/7cd7f235-7789-48ae-8acd-e61a963787de)
+
+# Spotlight Distance display
+![image](https://github.com/TheStoicBear/Spotlight/assets/112611821/7026321e-29aa-4aa6-bb7d-4d7972756f50)
+
+
+
+
 ----------------------------
 
 
