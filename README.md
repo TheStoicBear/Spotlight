@@ -1,3 +1,12 @@
+# Stoic Edits
+### LightModifier brightens you headlights when spotlight is active. 
+### Spotlight movement smoothing / realism
+
+
+
+
+
+
 **Spotlight - By FAXES & Slavko**
 
 ## [Discord :P](https://faxes.zone/discord)
